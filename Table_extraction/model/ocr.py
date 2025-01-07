@@ -65,3 +65,12 @@ for data in structured_data:
     for row, row_text in data.items():
       final_output.extend([row_text])
 
+
+
+with open('/Users/anmolchalise/Desktop/Major_Project/Table_transformer/Anmol/output.csv','w') as result_file:
+    wr = csv.writer(result_file, dialect='excel')
+
+    # The for loop MUST be inside the with statemen
+    for row_text in final_output:
+          wr.writerow(row_text)
+    # The with statement ensures that the file is closed automatically after the writing operation is complete.

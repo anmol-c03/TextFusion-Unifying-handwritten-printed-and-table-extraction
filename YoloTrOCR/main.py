@@ -1,5 +1,13 @@
 import os
 
+import sys
+import torch
+import torchvision
+
+import numpy as np
+from PIL import Image
+from huggingface_hub import snapshot_download
+# from visualization import visualize_bbox
 from text_recognition import TextRecognition
 from text_detection import TextDetection
 
@@ -7,6 +15,25 @@ file_path = os.path.dirname(os.path.abspath(__file__))
 OG_IMG_DIR = os.path.join(file_path,  'images', 'original')
 RESIZED_IMG_DIR = os.path.join(file_path, 'images', 'resized')
 TEXT_FILE_DIR = os.path.join(file_path, 'txt')
+
+id_to_names = {
+    0: 'title',
+    1: 'plain_text',
+    2: 'abandon',
+    3: 'figure',
+    4: 'figure_caption',
+    5: 'table',
+    6: 'table_caption',
+    7: 'table_footnote',
+    8: 'isolate_formula',
+    9: 'formula_caption'
+}
+
+
+model_dir = snapshot_download('juliozhao/DocLayout-YOLO-DocStructBench', local_dir='./model_doclayout/DocLayout-YOLO-DocStructBench')
+# == select device ==
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
 
 def pipeline_function(img_file):
     """

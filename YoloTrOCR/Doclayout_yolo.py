@@ -6,7 +6,7 @@ import numpy as np
 from PIL import Image
 import cv2
 root_path = os.path.abspath(os.getcwd())
-
+import torchvision
 
 ''' TODO: in main.py 
 iamge_path,
@@ -52,3 +52,24 @@ class Doclayoutyolo:
         cv2.putText(img, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
     return Image.fromarray(img)
     
+
+
+  def predict(self):
+      self.res = self.model.predict(
+              self.input_img,
+              imgsz=1024,
+              device=device,
+          )[0]
+      boxes = self.res.__dict__['boxes'].xyxy
+      classes = self.res.__dict__['boxes'].cls
+      scores = self.res.__dict__['boxes'].conf
+
+      indices = torchvision.ops.nms(boxes=torch.Tensor(boxes), scores=torch.Tensor(scores),iou_threshold=self.iou_threshold)
+      boxes, scores, classes = boxes[indices], scores[indices], classes[indices]
+      if len(boxes.shape) == 1:
+          self.boxes = np.expand_dims(boxes, 0)
+          scores = np.expand_dims(scores, 0)
+          classes = np.expand_dims(classes, 0)
+      vis_result=self.visualize_bbox( boxes, classes, scores, self.id_to_names)
+      vis_result.save("bboxes_image.jpg")
+      return boxes,classes,scores

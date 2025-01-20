@@ -38,14 +38,17 @@ class Doclayoutyolo:
           9: 'formula_caption'
         }
 
-    @staticmethod
-    def visualize_bbox(image, boxes, classes, scores, id_to_names):
-        img = np.array(image.copy())
-        for box, cls, score in zip(boxes, classes, scores):
-            x1, y1, x2, y2 = map(int, box)
-            class_name = id_to_names.get(int(cls), "Unknown")
-            label = f"{class_name}: {score:.2f}"
-            cv2.rectangle(img, (x1, y1), (x2, y2), color=(255, 0, 0), thickness=2)
-            cv2.putText(img, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
-        return Image.fromarray(img)
+  def visualize_bbox(self,
+                     boxes, 
+                     classes, 
+                     scores, 
+                     id_to_names):
+    img = np.array(self.input_img.copy())
+    for box, cls, score in zip(boxes, classes, scores):
+        x1, y1, x2, y2 = map(int, box)
+        class_name = id_to_names.get(int(cls), "Unknown")
+        label = f"{class_name}: {score:.2f}"
+        cv2.rectangle(img, (x1, y1), (x2, y2), color=(255, 0, 0), thickness=2)
+        cv2.putText(img, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
+    return Image.fromarray(img)
     

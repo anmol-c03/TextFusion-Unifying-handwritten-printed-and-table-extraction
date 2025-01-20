@@ -18,6 +18,8 @@ root_path = os.path.dirname(os.path.abspath(__file__))
 OG_IMG_DIR = os.path.join(root_path,  'images', 'original')
 RESIZED_IMG_DIR = os.path.join(root_path, 'images', 'resized')
 TEXT_FILE_DIR = os.path.join(root_path, 'txt')
+input_path=[]
+
 
 model_dir=os.path.join(root_path, "model_doclayout", "DocLayout-YOLO-DocStructBench", "doclayout_yolo_docstructbench_imgsz1024.pt")
 img_path=os.path.join(root_path,"aakritti_handwritten.jpg")
@@ -55,6 +57,8 @@ def pipeline_function(img_file):
         file.write(f'{key}:{out_text}\n\n')
 
 
-
 if __name__ == "__main__":
-    pipeline_function(img_file='test3.jpg')
+  for image_path in os.listdir(OG_IMG_DIR):
+    if image_path.endswith('.jpg'):
+      input_path.append(image_path)
+      pipeline_function(img_file=image_path)

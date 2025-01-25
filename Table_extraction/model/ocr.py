@@ -2,7 +2,7 @@ import numpy as np
 from paddleocr import PaddleOCR
 from tqdm.auto import tqdm
 from PIL import Image
-from cell_cordinates import cell_coordinates
+from cell_coordinates import cell_coordinates
 from crop_table import cropped_table
 
 import csv
@@ -67,7 +67,7 @@ for data in structured_data:
 
 
 
-with open('/Users/anmolchalise/Desktop/Major_Project/Table_transformer/Anmol/output.csv','w') as result_file:
+with open('/Users/anmolchalise/Desktop/Major_project_final/Table_extraction/images/output.csv','w') as result_file:
     wr = csv.writer(result_file, dialect='excel')
 
     # The for loop MUST be inside the with statemen

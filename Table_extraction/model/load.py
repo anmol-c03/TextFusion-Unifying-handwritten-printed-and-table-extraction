@@ -8,7 +8,7 @@ model = AutoModelForObjectDetection.from_pretrained("microsoft/table-transformer
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model.to(device)
 
-file_path = '/Users/anmolchalise/Desktop/Major_Project/Table_transformer/Anmol/anmol.jpg'
+file_path = '/Users/anmolchalise/Desktop/Major_project_final/Table_extraction/images/anmol.jpg'
 image = Image.open(file_path).convert("RGB")
 # let's display it a bit smaller
 width, height = image.size

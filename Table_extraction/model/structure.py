@@ -29,9 +29,3 @@ for i in range(len(cropped_table)):
       cell = outputs_to_objects(outputs[i], cropped_table[i].size, structure_id2label)
 
       cells.extend([cell])
-
-
-
-
-
-

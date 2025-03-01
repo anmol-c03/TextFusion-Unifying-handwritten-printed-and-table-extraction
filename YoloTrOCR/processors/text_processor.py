@@ -261,4 +261,94 @@ class TextProcessor:
         return text
     
 
+    def crop_image(self, image, bbox):
+        """
+        Crop image based on bounding box.
+        
+        Args:
+            image: Image array
+            bbox: Bounding box coordinates
+            
+        Returns:
+            Image: Cropped image
+        """
+
+        x_min = int(min(point[0] for point in bbox))
+        y_min = int(min(point[1] for point in bbox))
+        x_max = int(max(point[0] for point in bbox))
+        y_max = int(max(point[1] for point in bbox))
+
+        cropped_img = image[y_min:y_max, x_min:x_max]
+        return cropped_img
     
+    def correct_text(self, original_texts, generated_texts):
+        """
+        Correct text based on generated text.
+        
+        Args:
+            original_texts (list): Original text strings
+            generated_texts (list): Generated text strings
+            
+        Returns:
+            list: Corrected text strings
+        """
+        from difflib import get_close_matches
+        
+        corrected_text = []
+        for text in original_texts:
+            closest_match = get_close_matches(text, generated_texts, n=1, cutoff=0.6)
+            corrected_text.append(closest_match[0] if closest_match else text)
+        
+        return corrected_text
+
+    def process_handwritten_texts(self,results):
+
+        for image_data in results:
+            if image_data['filtered_results']:
+                if image_data['is_handwritten'] == 0:
+                    image_path = image_data['image_path']
+                    print("image_path",image_path)
+
+                    image = cv2.imread(image_path)
+                    prev_text=image_data['text']
+
+                    generated_texts=[]
+
+                    for bbox in image_data['filtered_results']:
+                        bbox_coords = bbox[0]  # Extract bbox points
+                        cropped_img = self.crop_image(image, bbox_coords)
+                        generated_text = self.tr_ocr.return_generated_text(cropped_img)
+                        generated_texts.append(generated_text)
+
+                    generated_text = '\n'.join(self.correct_text(prev_text, generated_texts))
+                    image_data['text']=generated_text
+
+                elif image_data['is_handwritten'] == 1:
+                    image_path =  image_data['image_path']
+                    image_data['text']=self.text_det_and_rec(image_path)
+            else:
+                generated_text='\n'.join(image_data['text'])
+                image_data['text']=generated_text
+        print(results)
+        return results
+        
+    def text_det_and_rec(self,img_file):
+      text_det_obj = TextDetection(img_file, confidence_threshold=0.5, overlap_threshold=0.5)
+      # key=img_file.split('_')[0]
+
+      cropped_images,_ = text_det_obj.return_cropped_images()
+
+
+      texts = []
+      for cropped_image in cropped_images:
+          generated_text = self.tr_ocr.return_generated_text(cropped_image)
+          generated_text=generated_text.replace('.',' ') # This is the weird behaviour of TrOCR
+          # print(generated_text)
+          if generated_text is None:
+              print(f'No text detected in {img_file}')
+              continue
+          texts.append(generated_text)
+          print("trocr with yolo")
+
+      return ' '.join(texts)
+

@@ -40,3 +40,26 @@ def clean_directories(directory_paths):
             print(f"Cleaned directory: {folder_path}")
         else:
             print(f"Directory does not exist: {folder_path}")
+
+
+def sort_files_naturally(files):
+    """
+    Sort filenames that include numbers in natural order.
+    
+    Args:
+        files (list): List of filenames to sort
+        
+    Returns:
+        list: Sorted list of filenames
+    """
+    return sorted(files, key=lambda x: int(x.split('_')[1][:-4]))
+
+    # import re
+    
+    # def atoi(text):
+    #     return int(text) if text.isdigit() else text
+    
+    # def natural_keys(text):
+    #     return [atoi(c) for c in re.split(r'(\d+)', text)]
+    
+    # return sorted(files, key=natural_keys)

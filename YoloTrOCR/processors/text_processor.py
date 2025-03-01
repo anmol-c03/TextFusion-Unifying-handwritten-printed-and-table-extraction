@@ -141,7 +141,9 @@ class TextProcessor:
 
         # Check if text appears to be handwritten
         
-        return ( filtered_results, extracted_texts)
+        is_handwritten = self.check_if_handwritten(extracted_texts)
+
+        return (is_handwritten,filtered_results, extracted_texts)
 
     
     def sort_ocr_results(self, results):
@@ -205,4 +207,58 @@ class TextProcessor:
                 sorted_results.append([item['box'], [item['text'], item['confidence']]])
 
         return sorted_results
+    
+    def check_if_handwritten(self, text_list):
+        """
+        Check if text appears to be handwritten based on tokenization.
+        
+        Args:
+            text_list (list): List of extracted text strings
+            
+        Returns:
+            int: 1 if handwritten, 0 if printed
+        """
+        if not text_list:
+            return 1  # No text detected, assume handwritten
+        
+        # Join all text lines
+        text = '\n'.join(text_list)
+        
+        # Replace known tokens
+        text = self.replace_tokens(text.lower())
+        
+        # Extract words
+        words = re.findall(r'[a-zA-Z]+', text)
+        if not words:
+            return 0  # No words found, likely not handwritten
+        
+        # Tokenize
+        tokens = self.tokenizer.encode(' '.join(words))
+        if not tokens:
+            return 0
+        
+        # Calculate tokenization granularity
+        tokenization_granularity = len(words) / len(tokens)
+        
+        # Heuristic: handwritten text typically has higher tokenization granularity
+        if tokenization_granularity >= 0.65 or len(words) == 1:
+            return 0  # Likely printed text
+        
+        return 1  # Likely handwritten
+    
+    def replace_tokens(self, text):
+        """
+        Replace known tokens in text.
+        
+        Args:
+            text (str): Input text
+            
+        Returns:
+            str: Text with tokens replaced
+        """
+        for token, token_id in self.token_mapping.items():
+            text = text.replace(token, token_id)
+        return text
+    
+
     

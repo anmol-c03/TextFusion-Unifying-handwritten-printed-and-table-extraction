@@ -35,7 +35,6 @@ chmod +x ./install.sh
 ```bash
 !python main.py --input survey_form_4.pdf --output txt 
 
-### Options
 
 - `--input`: Path to input PDF or image file (required)
 - `--output`: Path to output text folder (default: results)
@@ -45,9 +44,13 @@ chmod +x ./install.sh
 - `--clean`: Clean temp directories before processing
 - `--visualize`: Visualize detected regions
 
-## Project Structure
+
 
 ```
+
+## Project Structure
+
+```bash
 document-ocr-pipeline/
 ├── main.py               # Main script
 ├── setup.py              # **Setup script for packaging**

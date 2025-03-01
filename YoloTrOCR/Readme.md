@@ -35,6 +35,7 @@ chmod +x ./install.sh
 ```bash
 !python main.py --input survey_form_4.pdf --output txt 
 
+### options
 
 - `--input`: Path to input PDF or image file (required)
 - `--output`: Path to output text folder (default: results)

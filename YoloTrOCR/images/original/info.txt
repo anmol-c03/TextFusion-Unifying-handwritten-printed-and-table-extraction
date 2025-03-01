@@ -1,0 +1,1 @@
+images cropped as doclayout output is stored here

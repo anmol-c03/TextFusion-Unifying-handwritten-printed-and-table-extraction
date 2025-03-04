@@ -252,8 +252,8 @@ class TextDetection:
                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
         
         # Save debug image
-        file_name = f"{os.path.basename(self.image_file).split('.')[0]}_{idx + 1}{os.path.splitext(self.image_file)[-1]}"
-        debug_path = os.path.join(VISUALIZATION_DIR, f"debug_{file_name}")
+
+        debug_path = os.path.join(VISUALIZATION_DIR, f"debug_{os.path.basename(self.image_file)}")
         cv2.imwrite(debug_path, debug_image)
         print(f"Debug image with processing sequence saved to: {debug_path}")
 
@@ -269,7 +269,7 @@ class TextDetection:
             file_name = f"{os.path.basename(self.image_file).split('.')[0]}_{idx + 1}{os.path.splitext(self.image_file)[-1]}"
             cropped_images_file_name.append(file_name)
             
-            output_path = os.path.join("RESIZED_IMG_DIR", file_name)
+            output_path = os.path.join(RESIZED_IMG_DIR, file_name)
             print(f"Saving cropped image {idx+1}: {output_path}")
             cv2.imwrite(output_path, cropped_image)
 

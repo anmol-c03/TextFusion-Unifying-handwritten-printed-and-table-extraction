@@ -10,7 +10,7 @@ from .layout_processor import LayoutProcessor
 from .text_processor import TextProcessor
 from .text_detection import TextDetection
 from .text_recognition import TextRecognition
-from .correction_processor import CorrectionProcessor
+from .correction_processor import TextValidityChecker
 
 __all__ = [
     'PDFProcessor',
@@ -18,5 +18,5 @@ __all__ = [
     'TextProcessor',
     'TextDetection',
     'TextRecognition',
-    'CorrectionProcessor'
+    'TextValidityChecker'
 ]

@@ -15,7 +15,6 @@ RESIZED_IMG_DIR = os.path.join('.', 'images', 'resized')
 VISUALIZATION_DIR = os.path.join('.', 'images', 'visualization')
 
 # Ensure visualization directory exists
-os.makedirs(VISUALIZATION_DIR, exist_ok=True)
 
 class TextDetection:
     _model = None
@@ -26,6 +25,7 @@ class TextDetection:
         self.overlap_threshold = overlap_threshold
 
         if TextDetection._model is None:
+
             TextDetection._model = YOLO(model_path)
 
     def calculate_iou(self, box1: List[int], box2: List[int]) -> float:
@@ -209,7 +209,7 @@ class TextDetection:
             cv2.circle(viz_image, center, 3, color, -1)
         
         # Save visualization
-        viz_path = os.path.join(VISUALIZATION_DIR, f"reading_order_{self.image_file}")
+        viz_path = os.path.join(VISUALIZATION_DIR, f"reading_order_{os.path.basename(self.image_file)}")
         cv2.imwrite(viz_path, viz_image)
         print(f"Reading order visualization saved to: {viz_path}")
 
@@ -229,7 +229,7 @@ class TextDetection:
         Function to return a list of cropped images and their file names.
         :return: List of cropped images and file names.
         """
-        image_path = os.path.join(OG_IMG_DIR, self.image_file)
+        image_path =  self.image_file
         image = cv2.imread(image_path)
         bboxes = self.return_bboxes()
 
@@ -252,8 +252,8 @@ class TextDetection:
                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
         
         # Save debug image
-        # file_name = f"{os.path.splitext(self.image_file)[0]}_{idx + 1}{os.path.splitext(self.image_file)[-1]}"
-        debug_path = os.path.join(VISUALIZATION_DIR, f"debug_{self.image_file}")
+        file_name = f"{os.path.basename(self.image_file).split('.')[0]}_{idx + 1}{os.path.splitext(self.image_file)[-1]}"
+        debug_path = os.path.join(VISUALIZATION_DIR, f"debug_{file_name}")
         cv2.imwrite(debug_path, debug_image)
         print(f"Debug image with processing sequence saved to: {debug_path}")
 
@@ -266,10 +266,10 @@ class TextDetection:
             cropped_image = image[y1:y2, x1:x2]
             cropped_images.append(cropped_image)
 
-            file_name = f"{os.path.splitext(self.image_file)[0]}_{idx + 1}{os.path.splitext(self.image_file)[-1]}"
+            file_name = f"{os.path.basename(self.image_file).split('.')[0]}_{idx + 1}{os.path.splitext(self.image_file)[-1]}"
             cropped_images_file_name.append(file_name)
             
-            output_path = os.path.join("./images/resized", file_name)
+            output_path = os.path.join("RESIZED_IMG_DIR", file_name)
             print(f"Saving cropped image {idx+1}: {output_path}")
             cv2.imwrite(output_path, cropped_image)
 

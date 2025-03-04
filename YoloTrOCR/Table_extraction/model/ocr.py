@@ -19,11 +19,12 @@ import logging
 logging.getLogger().setLevel(logging.CRITICAL)
 
 # Initialize the PaddleOCR model (English)
-ocr = PaddleOCR(use_angle_cls=True, lang='en')  # You can add more languages if needed
-structured_data = []
 
 def apply_ocr(cell_coordinate,crop):
     # Let's OCR row by row
+    ocr = PaddleOCR(use_angle_cls=True, lang='en')  # You can add more languages if needed
+    structured_data = []
+
     data = dict()
     max_num_columns = 0
 
@@ -56,21 +57,6 @@ def apply_ocr(cell_coordinate,crop):
         data[row] = row_data
 
     return data
-for i in range(len(cell_coordinates)):
-    data = apply_ocr(cell_coordinates[i],cropped_table[i])
-    structured_data.extend([data])
-
-final_output=[]
-for data in structured_data:
-    for row, row_text in data.items():
-      final_output.extend([row_text])
 
 
 
-with open('/Users/anmolchalise/Desktop/Major_project_final/Table_extraction/images/output.csv','w') as result_file:
-    wr = csv.writer(result_file, dialect='excel')
-
-    # The for loop MUST be inside the with statemen
-    for row_text in final_output:
-          wr.writerow(row_text)
-    # The with statement ensures that the file is closed automatically after the writing operation is complete.

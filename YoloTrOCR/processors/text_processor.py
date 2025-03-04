@@ -76,13 +76,9 @@ class TextProcessor:
             result = self.process_image(idx, image_path)
             results.append(result)
             print(f"  Processed {img_file}: {'Handwritten' if result['is_handwritten'] else 'Printed'}")
-
-        for result in results:
-          print(result['filtered_results'],result['text'],result['is_handwritten'],result['image_path'])     
+     
         corrected_results=self.process_handwritten_texts(results)
 
-        for result in corrected_results:
-          print(result['text'])
         return corrected_results
     
     def process_image(self, idx, img_path):

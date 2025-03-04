@@ -1,6 +1,5 @@
-from structure import cells
 
-cell_coordinates=[]
+
 def get_cell_coordinates_by_row(table_data):
 
     # Extract rows and columns
@@ -37,7 +36,3 @@ def get_cell_coordinates_by_row(table_data):
 
     return cell_coordinates
 
-for cell in cells:
-
-    cell_coordinate = get_cell_coordinates_by_row(cell)
-    cell_coordinates.extend([cell_coordinate])

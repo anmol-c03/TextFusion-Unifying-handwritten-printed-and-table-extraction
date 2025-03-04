@@ -1,62 +1,123 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+import nltk
+import re
+from typing import Union, List, Set
+import google.generativeai as genai
 
-"""
-Text correction module using language tools.
-"""
 
-import language_tool_python
 
-class CorrectionProcessor:
-    """Class to handle text correction."""
+class TextValidityChecker:
+    """
+    A class to check the validity of words in text based on a dictionary lookup.
+    Uses NLTK's English word corpus by default but can accept custom dictionaries.
+    """
     
-    def __init__(self):
-        """Initialize the text correction processor."""
-        self.tool = language_tool_python.LanguageTool("en-US")
-    
-    def correct_all(self, image_results):
+    def __init__(self, threshold: float = 0.65, custom_dictionary: Set[str] = None):
         """
-        Correct all text in the image results.
+        Initialize the TextValidityChecker with a validity threshold.
         
         Args:
-            image_results (list): List of dictionaries with image processing results
-            
-        Returns:
-            list: List of corrected texts
+            threshold: The minimum ratio of valid words to consider text valid
+            custom_dictionary: Optional custom dictionary to use instead of NLTK's
         """
-        corrected_texts = []
-        for image_data in image_results:
-            text = image_data['text']
-            corrected_text, _ = self.check_and_correct_sentence(text)
-            corrected_texts.append(corrected_text)
-            
-            # Update the original result dictionary
-            image_data['text'] = corrected_text
+        self.threshold = threshold
+        self.dictionary = custom_dictionary if custom_dictionary is not None else self._load_nltk_dictionary()
         
-        return corrected_texts
-    
-    def check_and_correct_sentence(self, sentence):
+    def _load_nltk_dictionary(self) -> Set[str]:
         """
-        Check and correct grammatical errors in a sentence.
+        Load the NLTK English word dictionary.
+        
+        Returns:
+            Set[str]: A set of lowercase English words
+        """
+        try:
+            nltk.data.find('corpora/words')  # Check if words corpus is already downloaded
+        except LookupError:
+            print("Downloading NLTK 'words' corpus...")
+            nltk.download('words')  # Download if not present
+            
+        from nltk.corpus import words
+        return set(word.lower() for word in words.words())  # Create set, lowercase
+    
+    def is_valid_word(self, word: str) -> bool:
+        """
+        Check if a word is in the dictionary.
         
         Args:
-            sentence (str): Input sentence to correct
+            word: The word to check
             
         Returns:
-            tuple: (corrected_sentence, corrections)
+            bool: True if the word is in the dictionary, False otherwise
         """
-        if not sentence:
-            return sentence, []
+        processed_word = word.lower()  # Convert to lowercase for case-insensitivity
+        return processed_word in self.dictionary
+    
+    def extract_words(self, text: str) -> List[str]:
+        """
+        Extract words from text using regex.
+        
+        Args:
+            text: The text to extract words from
             
-        matches = self.tool.check(sentence)
-        if not matches:
-            return sentence, ["Correct sentence"]
+        Returns:
+            List[str]: A list of extracted words
+        """
+        return re.findall(r"\b[\w]+\b", text)
+    
+    def check_text_validity(self, text_input: Union[str, List[str]], verbose: bool = True) -> bool:
+        """
+        Check if the given text contains a sufficient proportion of valid words.
+        
+        Args:
+            text_input: Text to check, either as a string or a list of strings
+            verbose: Whether to print the validity ratio
+            
+        Returns:
+            bool: True if the text is valid according to the threshold, False otherwise
+        """
+        # Convert list to string if needed
+        if isinstance(text_input, list):
+            text = " ".join(text_input)
+        else:
+            text = text_input
+            
+        # Extract words
+        extracted_words = self.extract_words(text)
+        
+        # Handle empty text
+        if not extracted_words:
+            if verbose:
+                print("No words found in the text.")
+            return False
+            
+        # Count valid words
+        valid_count = sum(1 for word in extracted_words if self.is_valid_word(word))
+        validity_ratio = valid_count / len(extracted_words)
+        
+        if verbose:
+            print(f"\nValidity ratio: {validity_ratio:.2f} ({valid_count}/{len(extracted_words)} words)")
+            
+        # Check against threshold
+        return validity_ratio >= self.threshold
+    
 
-        corrections = []
-        for match in matches:
-            incorrect_word = match.context[match.offset:match.offset + match.errorLength]
-            suggestion = match.replacements[0] if match.replacements else "No suggestion"
-            corrections.append(f"'{incorrect_word}' → '{suggestion}'")
 
-        corrected_sentence = language_tool_python.utils.correct(sentence, matches)
-        return corrected_sentence, corrections
+    def api(self,image):
+
+      api_error_message_blurry = "That's a very blurry and small image.  I cannot reliably extract any handwritten words from it.  The resolution is too low and the quality is too poor for accurate text recognition."
+
+      print('/n Using api')
+      try:
+        genai.configure(api_key="your_api_key")
+
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        prompt_text = "Extract the handwritten words from this image.Donot output text other than that in image" 
+        response = model.generate_content([prompt_text, image])
+
+        if response and hasattr(response, 'text') and ( "cannot extract response" in response.text.lower() or api_error_message_blurry.lower() in response.text.lower()):
+          return None 
+        else:
+          return response.text
+        
+      except Exception as e:
+        print(f"Error calling Gemini API: {e}") 
+        return None 

@@ -10,7 +10,7 @@ from .ocr import Recognize
 import csv
 
 
-def extract(ocr,img_path):
+def extract(ocr,img_path,output_path='/content/drive/MyDrive/YoloTrOCR/Table_extraction/images/output1.csv'):
 
     model = AutoModelForObjectDetection.from_pretrained("microsoft/table-transformer-detection", revision="no_timm")
 
@@ -94,7 +94,7 @@ def extract(ocr,img_path):
         for row, row_text in data.items():
             final_output.extend([row_text])
     
-    with open('/content/drive/MyDrive/YoloTrOCR/Table_extraction/images/output1.csv','w') as result_file:
+    with open(output_path,'w') as result_file:
         wr = csv.writer(result_file, dialect='excel')
     # The for loop MUST be inside the with statemen
         for row_text in final_output:

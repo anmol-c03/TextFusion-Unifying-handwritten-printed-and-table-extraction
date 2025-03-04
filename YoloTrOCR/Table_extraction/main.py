@@ -2,23 +2,23 @@ from transformers import AutoModelForObjectDetection
 import torch
 from PIL import Image
 from torchvision import transforms
-from preprocess import *
-from crop_table import objects_to_crops
+from .preprocess import *
+from .crop_table import objects_to_crops
 from transformers import TableTransformerForObjectDetection
-from cell_coordinates import get_cell_coordinates_by_row
-from ocr import apply_ocr
+from .cell_coordinates import get_cell_coordinates_by_row
+from .ocr import Recognize
 import csv
 
 
-def main(img_path):
+def extract(ocr,img_path):
 
     model = AutoModelForObjectDetection.from_pretrained("microsoft/table-transformer-detection", revision="no_timm")
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device)
 
-    file_path = '/Users/anmolchalise/Desktop/Major_project_final/Table_extraction/images/anmol.jpg'
-    image = Image.open(file_path).convert("RGB")
+    print(img_path)
+    image = Image.open(img_path).convert("RGB")
     # let's display it a bit smaller
     width, height = image.size
 
@@ -84,8 +84,9 @@ def main(img_path):
         cell_coordinate = get_cell_coordinates_by_row(cell)
         cell_coordinates.extend([cell_coordinate])
     
+    paddle_ocr=Recognize(ocr)
     for i in range(len(cell_coordinates)):
-        data = apply_ocr(cell_coordinates[i],cropped_table[i])
+        data = paddle_ocr.apply_ocr(cell_coordinates[i],cropped_table[i])
         structured_data.extend([data])
 
     final_output=[]
@@ -93,11 +94,12 @@ def main(img_path):
         for row, row_text in data.items():
             final_output.extend([row_text])
     
-    with open('/Users/anmolchalise/Desktop/Major_project_final/Table_extraction/images/output.csv','w') as result_file:
+    with open('/content/drive/MyDrive/YoloTrOCR/Table_extraction/images/output1.csv','w') as result_file:
         wr = csv.writer(result_file, dialect='excel')
-
     # The for loop MUST be inside the with statemen
-    for row_text in final_output:
-          wr.writerow(row_text)
+        for row_text in final_output:
+              wr.writerow(row_text)
+    return final_output
 
+# main("/content/drive/MyDrive/YoloTrOCR/Table_extraction/images/anmol.jpg")
 

@@ -15,7 +15,8 @@ from paddleocr import PaddleOCR
 from utils.file_utils import sort_files_naturally
 from processors.text_recognition import TextRecognition
 from processors.text_detection import TextDetection
-
+from processors.correction_processor import TextValidityChecker
+from google.colab.patches import cv2_imshow
 
 
 class TextProcessor:
@@ -76,10 +77,10 @@ class TextProcessor:
             result = self.process_image(idx, image_path)
             results.append(result)
             print(f"  Processed {img_file}: {'Handwritten' if result['is_handwritten'] else 'Printed'}")
-     
-        corrected_results=self.process_handwritten_texts(results)
 
-        return corrected_results
+        corrected_results=self.process_handwritten_texts(results) 
+
+        return corrected_results,self.paddle_ocr
     
     def process_image(self, idx, img_path):
         """
@@ -129,17 +130,15 @@ class TextProcessor:
         
         for line in result:
             bbox, (text, score) = line
-            print(score)
             extracted_texts.append(text)
             # FIX: Add to filtered_results when score is BELOW the threshold
             if score < 0.9:
                 filtered_results.append((bbox, text, score))  # Note: Changed order to match usage in process_handwritten_texts
 
         # Check if text appears to be handwritten
-        
         is_handwritten = self.check_if_handwritten(extracted_texts)
-
-        return (is_handwritten,filtered_results, extracted_texts)
+        
+        return (is_handwritten, filtered_results, extracted_texts)
 
     
     def sort_ocr_results(self, results):
@@ -255,11 +254,11 @@ class TextProcessor:
         for token, token_id in self.token_mapping.items():
             text = text.replace(token, token_id)
         return text
-    
 
     def crop_image(self, image, bbox):
         """
         Crop image based on bounding box.
+      
         
         Args:
             image: Image array
@@ -298,15 +297,15 @@ class TextProcessor:
         return corrected_text
 
     def process_handwritten_texts(self,results):
-
+        checker = TextValidityChecker()
         for image_data in results:
             if image_data['filtered_results']:
+                prev_text=image_data['text']
                 if image_data['is_handwritten'] == 0:
                     image_path = image_data['image_path']
                     print("image_path",image_path)
 
                     image = cv2.imread(image_path)
-                    prev_text=image_data['text']
 
                     generated_texts=[]
 
@@ -321,30 +320,38 @@ class TextProcessor:
 
                 elif image_data['is_handwritten'] == 1:
                     image_path =  image_data['image_path']
-                    image_data['text']=self.text_det_and_rec(image_path)
+                    generated_text=self.text_det_and_rec(image_path)
+                    cleaned_text = ' '.join(generated_text.split())
+                    if not checker.check_text_validity(generated_text):
+                      img=Image.open(image_path)
+                      response=checker.api(img)
+                      if response:
+                          generated_text=response
+              
+                    # generated_text = '\n'.join(self.correct_text(prev_text, generated_texts))
+                    image_data['text']=generated_text
+
             else:
                 generated_text='\n'.join(image_data['text'])
                 image_data['text']=generated_text
-        print(results)
         return results
         
+
     def text_det_and_rec(self,img_file):
-      text_det_obj = TextDetection(img_file, confidence_threshold=0.5, overlap_threshold=0.5)
-      # key=img_file.split('_')[0]
+        text_det_obj = TextDetection(img_file, confidence_threshold=0.5, overlap_threshold=0.5)
 
-      cropped_images,_ = text_det_obj.return_cropped_images()
+        cropped_images,_ = text_det_obj.return_cropped_images()
 
-
-      texts = []
-      for cropped_image in cropped_images:
-          generated_text = self.tr_ocr.return_generated_text(cropped_image)
-          generated_text=generated_text.replace('.',' ') # This is the weird behaviour of TrOCR
-          # print(generated_text)
-          if generated_text is None:
-              print(f'No text detected in {img_file}')
-              continue
-          texts.append(generated_text)
-          print("trocr with yolo")
-
-      return ' '.join(texts)
-
+        if cropped_images:
+            batch_texts = self.tr_ocr.return_generated_text(cropped_images)
+            
+            texts = [text.replace('.', ' ') if text is not None else None for text in batch_texts]
+            texts = [text for text in texts if text is not None]
+            if len(texts) < len(cropped_images):
+                print(f'No text detected in some images from {img_file}')
+            
+            print("trocr with yolo (batch processing)")
+        else:
+              texts = []
+              print(f'No text regions detected in {img_file}')
+        return ' '.join(texts)

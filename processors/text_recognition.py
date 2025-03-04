@@ -25,29 +25,27 @@ class TextRecognition:
             TextRecognition._processor = TrOCRProcessor.from_pretrained(MODEL_NAME)
 
     @staticmethod
-    def return_generated_text(image) :
+    def return_generated_text(images_list):
         """
-        Function to return text associated with each cropped image file
-        :param image_path: OpenCV image (NumPy array)
-        :return: generated_text
+        Function to process a batch of images at once
+        :param images_list: List of OpenCV images (NumPy arrays)
+        :return: List of generated text strings in the same order as input images
         """
-
-        # Convert OpenCV image (NumPy array) to PIL Image
-        # pil_image = Image.open(image_path)
-        # print(type(image))
-
-
+        # if not images_list:
+        #     return []
+            
         if TextRecognition._processor is None:
             raise ValueError("Processor is not initialized.")
-
-        # Process the image
-        pixel_values = TextRecognition._processor(image, return_tensors="pt").pixel_values
-
+            
+        # Process all images in a single batch
+        batch_pixel_values = TextRecognition._processor(images=images_list, return_tensors="pt").pixel_values
+        
         # Move pixel values to the specified device
-        pixel_values = pixel_values.to(TextRecognition.device)
-
-        # Generate text
-        generated_ids = TextRecognition._model.generate(pixel_values)
-        generated_text = TextRecognition._processor.batch_decode(generated_ids, skip_special_tokens=True)[0]
-
-        return generated_text
+        batch_pixel_values = batch_pixel_values.to(TextRecognition.device)
+        
+        # Generate all text at once
+        batch_generated_ids = TextRecognition._model.generate(batch_pixel_values)
+        batch_generated_text = TextRecognition._processor.batch_decode(batch_generated_ids, skip_special_tokens=True)
+        print('trocr with yolo')
+        
+        return batch_generated_text

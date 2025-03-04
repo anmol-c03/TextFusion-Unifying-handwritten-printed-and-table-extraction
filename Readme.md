@@ -18,7 +18,7 @@ A comprehensive document OCR pipeline that combines document layout analysis, te
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/document-ocr-pipeline.git
+git clone https://github.com/anmol-c03/Structured_handwritten_data_extraction.git
 cd YoloTrOCR
 ```
 

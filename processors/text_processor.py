@@ -16,7 +16,7 @@ from utils.file_utils import sort_files_naturally
 from processors.text_recognition import TextRecognition
 from processors.text_detection import TextDetection
 from processors.correction_processor import TextValidityChecker
-from google.colab.patches import cv2_imshow
+
 
 
 class TextProcessor:
@@ -114,6 +114,9 @@ class TextProcessor:
         Returns:
             tuple: (is_handwritten, filtered_results, extracted_texts)
         """
+        if 'Table' in os.path.basename(image_path):
+            return (0,[],[])
+        result = self.paddle_ocr.ocr(image_path, cls=True)
         # Run OCR
         result = self.paddle_ocr.ocr(image_path, cls=True)
         

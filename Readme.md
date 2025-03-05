@@ -22,14 +22,19 @@ This project implements modular approach such that it can be used with minimum c
 
 # Results
 
-1. Survey Form without Tables:
+<!-- 1. Survey Form without Tables:
 ![NO Tables](https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/results/survey_results.png)
 
 2. Survey Form with Table:
 ![With  Tables](https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/results/surveyform_withtables.png)
 
 3. Table Only
-![Marksheet](https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/results/table_as_csv.png)
+![Marksheet](https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/results/table_as_csv.png) -->
+<p align="center">
+  <img src="https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/results/survey_results.png" width="30%" alt="NO Tables">
+  <img src="https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/results/surveyform_withtables.png" width="30%" alt="With Tables">
+  <img src="https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/results/table_as_csv.png" width="30%" alt="Marksheet">
+</p>
 
 
 ## Installation

@@ -35,7 +35,7 @@ This project implements modular approach such that it can be used with minimum c
   <img src="https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/results/images_with_table/surveyform_withtables.png" width="45%" alt="With Tables">
   <br>  <!-- Line break to move next two images below -->
   <img src="https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/results/Table_only/table_as_csv.png" width="45%" alt="Marksheet">
-  <img src="https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/results/Table_only/download_csv.png" width="45%" alt="Fourth Image">
+  <img src="https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/results/Table_only/download_csv.jpg" width="45%" alt="Fourth Image">
 </p>
 
 

@@ -131,3 +131,9 @@ Structured_handwritten_data_extraction/                      # Project root
 - Python 3.7+
 - CUDA compatible GPU (recommended for faster processing)
 - See requirements.txt and install.sh for required packages
+
+
+## Contributors
+
+For backend , please refer to the link  
+Backend Service ([Backend Link](https://github.com/ashim-karki/StructuredHandwrittenDataExtraction-Backend))

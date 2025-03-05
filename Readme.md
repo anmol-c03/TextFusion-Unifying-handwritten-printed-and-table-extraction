@@ -1,6 +1,7 @@
 # Document OCR Pipeline
 
-A comprehensive document OCR pipeline that combines document layout analysis, text detection, text recognition, and text correction to extract text from documents containing both printed and handwritten text.
+A comprehensive document OCR pipeline that  extacts everything from the given document independent of layout and structure. It combines document layout analysis, text detection, text recognition, and text correction to extract text as well as tables from documents containing both printed and handwritten text.
+This project implements modular approach such that it can be used with minimum compute time and resources.
 
 ## Features
 
@@ -13,6 +14,11 @@ A comprehensive document OCR pipeline that combines document layout analysis, te
 - Completely secure if integrated even with proprietary software/LLMs
 - Text correction using language tools
 - Modular and extensible architecture
+
+## System Pipeline
+
+![Layout Independent Extraction Pipeline](https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/images/project_pipeline/layout_independent_extarction.png)
+
 
 ## Installation
 
@@ -33,7 +39,7 @@ chmod +x ./install.sh
 ## Usage
 
 ```bash
-!python main.py --input survey_form_4.pdf --output txt 
+!python main.py --input /path/to/your/pdf --output txt 
 
 ### options
 
@@ -52,30 +58,42 @@ chmod +x ./install.sh
 ## Project Structure
 
 ```bash
-document-ocr-pipeline/
-├── main.py               # Main script
-├── setup.py              # **Setup script for packaging**
+Structured_handwritten_data_extraction/                      # Project root
+├── images/  
+│   ├── original/
+│   ├── resized/
+│   └── extract_pdf/                 # Folder for images
+├── model_doclayout/                 # Model-related files for layout processor
+├── models/                          # Folder for storing YOLO model for text detection
+|    |_bestline.pt                         
 ├── processors/
 │   ├── __init__.py
 │   ├── pdf_processor.py
 │   ├── layout_processor.py
 │   ├── text_processor.py
 │   ├── text_recognition.py
-│   └── correction_processor.py
+│   └── correction_processor.py                      # Processing scripts
+├── Table_extraction/                 # Table extraction module
+│   ├── images/                       # Subfolder for table images
+│   ├── __init__.py                   # Init file
+│   ├── cell_coordinates.py           # Table cell detection script
+│   ├── crop_table.py                 # Table cropping script
+│   ├── main.py                       # Main script for table extraction
+│   ├── ocr.py                        # OCR processing script
+│   └── preprocess.py                 # Preprocessing script
+├── txt/                              # Folder for extracted text files
+│   ├── txt.1                         
+│   ├── txt.2                         
+│   ├── txt.3                         
 ├── utils/
 │   ├── __init__.py
-│   └── file_utils.py
-├── images/
-│   ├── original/
-│   ├── resized/
-│   └── extract_pdf/
-├── txt/
-|   |_txt.1
-|   |_txt.2
-|   |_txt.3.....
-└── models
-|    |_bestline.pt
-|__ models_doclayout
+│   └── file_utils.py                          # Utility functions
+├── .gitignore                        # Git ignore file
+├── install.sh                        # Installation script
+├── main_for_api.py                   # Main script for API integration
+├── main.py                           # Main script
+├── Readme.md                         # Project documentation
+└── requirements.txt                   # Dependencies list
 
 
 ```

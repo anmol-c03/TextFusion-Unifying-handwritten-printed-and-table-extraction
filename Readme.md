@@ -31,11 +31,11 @@ This project implements modular approach such that it can be used with minimum c
 3. Table Only
 ![Marksheet](https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/results/table_as_csv.png) -->
 <p align="center">
-  <img src="https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/results/survey_results.png" width="45%" alt="NO Tables">
-  <img src="https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/results/surveyform_withtables.png" width="45%" alt="With Tables">
+  <img src="https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/results/images_wo_table/survey_results.png" width="45%" alt="NO Tables">
+  <img src="https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/results/images_with_table/surveyform_withtables.png" width="45%" alt="With Tables">
   <br>  <!-- Line break to move next two images below -->
-  <img src="https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/results/table_as_csv.png" width="45%" alt="Marksheet">
-  <img src="https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/results/download_csv.png" width="45%" alt="Fourth Image">
+  <img src="https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/results/Table_only/table_as_csv.png" width="45%" alt="Marksheet">
+  <img src="https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/results/Table_only/download_csv.png" width="45%" alt="Fourth Image">
 </p>
 
 

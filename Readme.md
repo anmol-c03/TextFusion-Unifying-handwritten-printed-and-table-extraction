@@ -17,7 +17,7 @@ This project implements modular approach such that it can be used with minimum c
 
 ## System Pipeline
 
-![Layout Independent Extraction Pipeline](https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/images/project_pipeline/layout_independent_extarction.png)
+![Layout Independent Extraction Pipeline](https://github.com/anmol-c03/Structured_handwritten_data_extraction/blob/main/images/project_pipeline/system_pipeline.png)
 
 
 ## Installation

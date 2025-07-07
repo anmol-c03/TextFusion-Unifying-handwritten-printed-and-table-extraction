@@ -80,13 +80,13 @@ def main():
         
         # Step 3: OCR processing
         text_processor = TextProcessor(confidence_threshold=args.confidence)
-        image_results = text_processor.process_directory(dirs['original'])
+        final_texts = text_processor.process_directory(dirs['original'])
         
-        for image in image_results:
-            print(image['text'])
+        # for image in image_results:
+        #     print(image['text'])
         # Step 4: Text correction
-        correction_processor = CorrectionProcessor()
-        final_texts = correction_processor.correct_all(image_results)
+        # correction_processor = CorrectionProcessor()
+        # final_texts = correction_processor.correct_all(image_results)
         
         # Save results
         txt_filename = os.path.join(output_folder, f"{os.path.basename(pdf2img_path).split('.')[0]}.txt")
